@@ -1,0 +1,6 @@
+FROM nginx
+COPY ./default.conf /etc/nginx/conf.d/default.conf
+# with the command above, since we specified a file 
+# instead of a directory as destination, we are 
+# stating the file has to be overwritten
+
