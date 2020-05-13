@@ -1,0 +1,23 @@
+sudo: required
+services:
+        - docker
+
+before_install:
+        - docker build -t uazadi/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+        - docker run -e CI=true uazadi/react-test npm test -- --coverage
+
+after_success:
+        - docker build -t uazadi/multi-client ./client
+        - docker build -t uazadi/multi-nginx ./nginx
+        - docker build -t uazadi/multi-server ./server
+        - docker build -t uazadi/multi-worker ./worker
+        # Login into the docker CLI 
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+        # Push the images to docker hub
+        - docker push uazadi/multi-client 
+        - docker push uazadi/multi-nginx
+        - docker push uazadi/multi-server
+        - docker push uazadi/multi-worker
+
